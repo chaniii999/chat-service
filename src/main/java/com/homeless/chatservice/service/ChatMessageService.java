@@ -1,0 +1,41 @@
+package com.homeless.chatservice.service;
+
+
+import com.homeless.chatservice.common.entity.ChatMessage;
+import com.homeless.chatservice.dto.ChatMessageCreateCommand;
+
+import com.homeless.chatservice.repository.ChatMessageRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@Transactional
+public class ChatMessageService {
+
+    private final ChatMessageRepository chatMessageRepository;
+
+    public ChatMessageService(ChatMessageRepository chatMessageRepository) {
+        this.chatMessageRepository = chatMessageRepository;
+    }
+
+    public String createChatMessage(ChatMessageCreateCommand command) {
+        // 채팅 메시지 생성
+        ChatMessage chatMessage = ChatMessage.builder()
+                .roomId(command.roomId())
+                .from(command.from())
+                .content(command.content())
+                .timestamp(System.currentTimeMillis())
+                .build();
+
+        // MongoDB에 저장
+        ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
+        return savedMessage.getId();  // 저장된 메시지의 id 반환
+    }
+
+    public List<ChatMessage> getMessagesByRoomId(Long roomId) {
+        // 특정 채팅방에 대한 메시지 조회
+        return chatMessageRepository.findByRoomId(roomId);
+    }
+}

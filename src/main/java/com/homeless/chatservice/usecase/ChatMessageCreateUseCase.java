@@ -1,5 +1,6 @@
-package com.homeless.chatservice.dto;
+package com.homeless.chatservice.usecase;
 
+import com.homeless.chatservice.dto.ChatMessageCreateCommand;
 import org.springframework.stereotype.Component;
 
 @Component
