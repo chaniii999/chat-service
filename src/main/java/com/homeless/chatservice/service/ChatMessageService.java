@@ -4,6 +4,7 @@ package com.homeless.chatservice.service;
 import com.homeless.chatservice.common.entity.ChatMessage;
 import com.homeless.chatservice.dto.ChatMessageCreateCommand;
 
+import com.homeless.chatservice.dto.ChatMessageResponse;
 import com.homeless.chatservice.repository.ChatMessageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,8 +35,14 @@ public class ChatMessageService {
         return savedMessage.getId();  // 저장된 메시지의 id 반환
     }
 
-    public List<ChatMessage> getMessagesByRoomId(Long roomId) {
-        // 특정 채팅방에 대한 메시지 조회
-        return chatMessageRepository.findByRoomId(roomId);
+    public List<ChatMessageResponse> getMessagesByRoomId(Long roomId) {
+        // 특정 채팅방의 메시지 조회
+        return chatMessageRepository.findByRoomId(roomId).stream()
+            .map(msg -> new ChatMessageResponse(
+                msg.getId(),
+                msg.getContent(),
+                msg.getFrom()
+            ))
+            .toList();
     }
 }

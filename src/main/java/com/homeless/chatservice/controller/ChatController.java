@@ -4,6 +4,7 @@ import com.homeless.chatservice.dto.ChatMessageCreateCommand;
 import com.homeless.chatservice.dto.ChatMessageRequest;
 import com.homeless.chatservice.dto.ChatMessageResponse;
 import com.homeless.chatservice.service.ChatMessageService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +55,19 @@ public class ChatController {
             throw new RuntimeException("Error handling chat message", e);
         }
     }
+    // 특정 채팅방의 메시지 조회
+    @GetMapping("/rooms/{roomId}/messages")
+    public ResponseEntity<List<ChatMessageResponse>> getMessages(@PathVariable Long roomId) {
+        try {
+            // 메시지 조회
+            List<ChatMessageResponse> messages = chatMessageService.getMessagesByRoomId(roomId);
+            return ResponseEntity.ok(messages);
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving chat messages", e);
+        }
+    }
+
+
 
     // 예외 처리 로직 (클라이언트에 에러 메시지 전송 등)
     @MessageExceptionHandler
