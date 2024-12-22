@@ -26,7 +26,7 @@ public class ChatMessageService {
         ChatMessage chatMessage = ChatMessage.builder()
             .serverId(command.serverId())
                 .channelId(command.channelId())
-                .from(command.from())
+                .writer(command.writer())
                 .content(command.content())
                 .timestamp(System.currentTimeMillis())
                 .build();
@@ -43,7 +43,8 @@ public class ChatMessageService {
             .map(msg -> new ChatMessageResponse(
                 msg.getId(),
                 msg.getContent(),
-                msg.getFrom()
+                msg.getWriter(),
+                msg.getTimestamp()
             ))
             .toList();
     }

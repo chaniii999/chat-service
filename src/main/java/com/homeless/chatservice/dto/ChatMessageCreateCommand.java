@@ -6,6 +6,6 @@ import lombok.Builder;
 // 채널id, 내용, 작성자
 @Builder
 public record ChatMessageCreateCommand(Long serverId,
-                                       Long channelId, String content, String from) {
+                                       Long channelId, String content, String writer) {
 
 }

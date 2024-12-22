@@ -30,7 +30,7 @@ public class ChatMessageServiceTest {
                 .id("123")
                 .channelId(1L)
                 .content("Hello")
-                .from("user1")
+                .writer("user1")
                 .timestamp(System.currentTimeMillis())
                 .build();
 

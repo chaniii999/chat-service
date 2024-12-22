@@ -28,13 +28,13 @@ public class ChatController {
         try {
             // 채팅 메시지 생성
             ChatMessageCreateCommand chatMessageCreateCommand =
-                new ChatMessageCreateCommand(serverId, channelId, chatMessage.text(), chatMessage.from());
+                new ChatMessageCreateCommand(serverId, channelId, chatMessage.text(), chatMessage.writer());
 
             // 메시지 저장
             String chatId = chatMessageService.createChatMessage(chatMessageCreateCommand);
 
             // 저장된 메시지 응답
-            return new ChatMessageResponse(chatId, chatMessage.text(), chatMessage.from());
+            return new ChatMessageResponse(chatId, chatMessage.text(), chatMessage.writer(), chatMessage.timestamp());
         } catch (Exception e) {
             throw new RuntimeException("Error handling chat message", e);
         }
@@ -49,13 +49,13 @@ public class ChatController {
         try {
             // 채팅 메시지 생성
             ChatMessageCreateCommand chatMessageCreateCommand =
-                new ChatMessageCreateCommand(serverId, channelId, chatMessage.text(), chatMessage.from());
+                new ChatMessageCreateCommand(serverId, channelId, chatMessage.text(), chatMessage.writer());
 
             // 메시지 저장
             String chatId = chatMessageService.createChatMessage(chatMessageCreateCommand);
 
             // 저장된 메시지 응답
-            return ResponseEntity.ok(new ChatMessageResponse(chatId, chatMessage.text(), chatMessage.from()));
+            return ResponseEntity.ok(new ChatMessageResponse(chatId, chatMessage.text(), chatMessage.writer(), chatMessage.timestamp()));
         } catch (Exception e) {
             throw new RuntimeException("Error handling chat message", e);
         }

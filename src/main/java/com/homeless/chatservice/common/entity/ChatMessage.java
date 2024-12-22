@@ -21,7 +21,7 @@ public class ChatMessage {
 
     private Long serverId;
     private Long channelId;
-    private String from;
+    private String writer;
     private String content;
     private Long timestamp;
 }
