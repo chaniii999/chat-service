@@ -19,12 +19,16 @@ public class ChatController {
     private final ChatMessageService chatMessageService;
 
     // WebSocket 메시지 전송 처리
-    @MessageMapping("/rooms/{roomId}/send")
-    @SendTo("/topic/public/rooms/{roomId}")
-    public ChatMessageResponse sendMessageWebSocket(@DestinationVariable Long roomId, @Payload ChatMessageRequest chatMessage) {
+    @MessageMapping("/{serverId}/{channelId}/send")
+    @SendTo("/topic/{serverId}/{channelId}")
+    public ChatMessageResponse sendMessageWebSocket(
+        @DestinationVariable Long serverId,
+        @DestinationVariable Long channelId,
+        @Payload ChatMessageRequest chatMessage) {
         try {
             // 채팅 메시지 생성
-            ChatMessageCreateCommand chatMessageCreateCommand = new ChatMessageCreateCommand(roomId, chatMessage.text(), chatMessage.from());
+            ChatMessageCreateCommand chatMessageCreateCommand =
+                new ChatMessageCreateCommand(serverId, channelId, chatMessage.text(), chatMessage.from());
 
             // 메시지 저장
             String chatId = chatMessageService.createChatMessage(chatMessageCreateCommand);
@@ -36,40 +40,42 @@ public class ChatController {
         }
     }
 
-    // HTTP POST 요청을 통한 메시지 전송 처리 (roomId는 고정 값)
-    @PostMapping("/rooms/{roomId}/send")
-    public ChatMessageResponse sendMessageHttp(@RequestBody ChatMessageRequest chatMessage) {
+    // HTTP POST 요청을 통한 메시지 전송 처리
+    @PostMapping("/{serverId}/{channelId}/send")
+    public ResponseEntity<ChatMessageResponse> sendMessageHttp(
+        @PathVariable Long serverId,
+        @PathVariable Long channelId,
+        @RequestBody ChatMessageRequest chatMessage) {
         try {
-            // roomId는 고정 값 1
-            Long roomId = 1L;
-
             // 채팅 메시지 생성
-            ChatMessageCreateCommand chatMessageCreateCommand = new ChatMessageCreateCommand(roomId, chatMessage.text(), chatMessage.from());
+            ChatMessageCreateCommand chatMessageCreateCommand =
+                new ChatMessageCreateCommand(serverId, channelId, chatMessage.text(), chatMessage.from());
 
             // 메시지 저장
             String chatId = chatMessageService.createChatMessage(chatMessageCreateCommand);
 
             // 저장된 메시지 응답
-            return new ChatMessageResponse(chatId, chatMessage.text(), chatMessage.from());
+            return ResponseEntity.ok(new ChatMessageResponse(chatId, chatMessage.text(), chatMessage.from()));
         } catch (Exception e) {
             throw new RuntimeException("Error handling chat message", e);
         }
     }
-    // 특정 채팅방의 메시지 조회
-    @GetMapping("/rooms/{roomId}/messages")
-    public ResponseEntity<List<ChatMessageResponse>> getMessages(@PathVariable Long roomId) {
+
+    // 특정 채널의 메시지 조회
+    @GetMapping("/{serverId}/{channelId}/messages")
+    public ResponseEntity<List<ChatMessageResponse>> getMessages(
+        @PathVariable Long serverId,
+        @PathVariable Long channelId) {
         try {
             // 메시지 조회
-            List<ChatMessageResponse> messages = chatMessageService.getMessagesByRoomId(roomId);
+            List<ChatMessageResponse> messages = chatMessageService.getMessagesByChannel(channelId);
             return ResponseEntity.ok(messages);
         } catch (Exception e) {
             throw new RuntimeException("Error retrieving chat messages", e);
         }
     }
 
-
-
-    // 예외 처리 로직 (클라이언트에 에러 메시지 전송 등)
+    // WebSocket 예외 처리
     @MessageExceptionHandler
     public void handleMessageException(RuntimeException e) {
         System.err.println(e.getMessage());

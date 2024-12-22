@@ -24,7 +24,8 @@ public class ChatMessageService {
     public String createChatMessage(ChatMessageCreateCommand command) {
         // 채팅 메시지 생성
         ChatMessage chatMessage = ChatMessage.builder()
-                .roomId(command.roomId())
+            .serverId(command.serverId())
+                .channelId(command.channelId())
                 .from(command.from())
                 .content(command.content())
                 .timestamp(System.currentTimeMillis())
@@ -35,9 +36,10 @@ public class ChatMessageService {
         return savedMessage.getId();  // 저장된 메시지의 id 반환
     }
 
-    public List<ChatMessageResponse> getMessagesByRoomId(Long roomId) {
+
+    public List<ChatMessageResponse> getMessagesByChannel(Long channelId) {
         // 특정 채팅방의 메시지 조회
-        return chatMessageRepository.findByRoomId(roomId).stream()
+        return chatMessageRepository.findByChannelId(channelId).stream()
             .map(msg -> new ChatMessageResponse(
                 msg.getId(),
                 msg.getContent(),

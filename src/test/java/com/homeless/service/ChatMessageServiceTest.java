@@ -28,7 +28,7 @@ public class ChatMessageServiceTest {
         ChatMessageCreateCommand command = new ChatMessageCreateCommand(1L, "Hello", "user1");
         ChatMessage savedMessage = ChatMessage.builder()
                 .id("123")
-                .roomId(1L)
+                .channelId(1L)
                 .content("Hello")
                 .from("user1")
                 .timestamp(System.currentTimeMillis())
